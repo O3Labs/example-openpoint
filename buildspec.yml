@@ -1,0 +1,31 @@
+version: 0.1
+
+phases:
+  install:
+     commands:
+      - go get -u github.com/jteeuwen/go-bindata/...
+  build:
+    commands:
+      - echo Download dependencies
+      - sh dep.sh
+      - mkdir -p /go/src/github.com/o3labs/openpoint
+      - mv * /go/src/github.com/o3labs/openpoint/
+      
+      - cp /go/src/github.com/o3labs/openpoint/appspec.yml appspec.yml
+      - cp -r /go/src/github.com/o3labs/openpoint/scripts scripts
+      - cp -r /go/src/github.com/o3labs/openpoint/systemd systemd
+      - cp -r /go/src/github.com/o3labs/openpoint/config config
+      - echo build config
+      - go-bindata -pkg=config -o=platform/config/json.go config/...  
+      - echo Build started
+      - echo Build o3
+      - go build -o openpoint /go/src/github.com/o3labs/openpoint/platform/main.go
+  post_build:
+    commands:
+      - echo Build completed on `date`
+artifacts:
+  files:
+    - scripts/*
+    - systemd/*
+    - appspec.yml
+    - openpoint

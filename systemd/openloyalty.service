@@ -1,0 +1,10 @@
+[Unit]
+Description=O3 Open Loyalty System
+
+[Service]
+EnvironmentFile=/etc/.playground.conf
+ExecStart=/var/github.com/o3labs/openpoint/./openpoint -mode=${env}
+Restart=always
+
+[Install]
+WantedBy=default.target

@@ -1,0 +1,23 @@
+{
+	"name": "production",
+	"root" :"",
+	"baseUrl": "https://play.o3.network",
+	"publicBaseUrl": "",
+	"port": 8080,
+	"resource": {
+		"file": {
+			"path": "/api/files/"
+		}
+	},
+	"email": {
+		"from": "O3 Labs <hello@o3.network>"
+	},
+	"aws": {
+		"region": "us-west-2"
+	},
+	"neo":{
+		"cozEndpoint":"http://testnet-api.neonwallet.com",
+		"smartContractScriptHash":"b7c1f850a025e34455e7e98c588c784385077fb1",
+		"fullNodeURL":"http://seed4.neo.org:20332"
+	}
+}

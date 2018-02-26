@@ -1,0 +1,292 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<title>O3 Cafe</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+	<script src="https://js.stripe.com/v3/"></script>
+
+	<style type="text/css">
+	.StripeElement {
+		background-color: white;
+		width: 100%;
+		height: 40px;
+		padding: 10px 12px;
+		border-radius: 4px;
+		border: 1px solid transparent;
+		box-shadow: 0 1px 3px 0 #e6ebf1;
+		-webkit-transition: box-shadow 150ms ease;
+		transition: box-shadow 150ms ease;
+	}
+
+	.StripeElement--focus {
+		box-shadow: 0 1px 3px 0 #cfd7df;
+	}
+
+	.StripeElement--invalid {
+		border-color: #fa755a;
+	}
+
+	.StripeElement--webkit-autofill {
+		background-color: #fefde5 !important;
+	}
+
+</style>
+
+</head>
+<body class="bg-light">
+	<div class="container">
+		<div class="py-5 text-center">
+			<img src="data:image/png;base64,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" height="50">
+			<h2 class="mt-4">Buy the CAF points</h2>
+			<p class="lead">Use points for a cup of coffee or bakery at our cafe<br/> or choose to send your friends a treat and make their days.</p>
+			<small class="text-muted">You can use any NEO compatible wallet to store CAF points.</small>
+		</div>
+		<div class="row">
+			<div class="col-md-8 mx-auto order-md-1">
+				<form class="needs-validation"  action="/charge" method="post" id="payment-form">
+					<div class="card-deck mb-3 text-center">
+						<div class="card mb-4 box-shadow">
+							<div class="card-header">
+								<h4 class="my-0 font-weight-normal">1,000CAF</h4>
+							</div>
+							<div class="card-body">
+								<h1 class="card-title pricing-card-title">$10</h1>
+
+								<div class="custom-control custom-radio custom-control-inline">
+									<input type="radio" id="numberOfTokens1" name="numberOfTokens" class="custom-control-input" checked value="1000">
+									<label class="custom-control-label" for="numberOfTokens1"> BUY THIS</label>
+								</div>
+								<br>
+							</div>
+						</div>
+						<div class="card mb-4 box-shadow">
+							<div class="card-header">
+								<h4 class="my-0 font-weight-normal">2,000CAF</h4>
+							</div>
+							<div class="card-body">
+								<h1 class="card-title pricing-card-title">$20</h1>
+								<div class="custom-control custom-radio custom-control-inline">
+									<input type="radio" id="numberOfTokens2" name="numberOfTokens" class="custom-control-input" value="2000">
+									<label class="custom-control-label" for="numberOfTokens2"> BUY THIS</label>
+								</div>
+							</div>
+						</div>
+						<div class="card mb-4 box-shadow">
+							<div class="card-header">
+								<h4 class="my-0 font-weight-normal">5,000CAF</h4>
+							</div>
+							<div class="card-body">
+								<h1 class="card-title pricing-card-title">$50</h1>
+								<div class="custom-control custom-radio custom-control-inline">
+									<input type="radio" id="numberOfTokens3" name="numberOfTokens" class="custom-control-input" value="5000">
+									<label class="custom-control-label" for="numberOfTokens3"> BUY THIS</label>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="email">Your NEO Address <span class="text-danger">(Required)</span></label>
+						<p>Enter a valid NEO Address to receive the CAF points.</p>
+						<input type="text" class="form-control" id="neoAddress"  placeholder="AeNkb..." required>
+						<div class="invalid-feedback">
+							Please enter a valid NEO Address to receive the tokens.
+						</div>
+					</div>
+
+					<div class="mb-3">
+						<label for="email">Email <span class="text-danger">(Required)</span></label>
+						<input type="email" class="form-control" id="email" placeholder="your@email.com" required>
+						<div class="invalid-feedback">
+							Please enter a valid email address.
+						</div>
+					</div>
+
+					<hr class="mb-4">
+
+					<h4 class="mb-3">Payment</h4>
+
+					<div class="mb-3">
+
+						<div class="form-row">
+
+							<div id="card-element">
+								<!-- a Stripe Element will be inserted here. -->
+							</div>
+
+							<!-- Used to display form errors -->
+							<div id="card-errors" role="alert"></div>
+						</div>
+
+					</div>
+
+
+					<hr class="mb-4">
+					<button class="btn btn-primary btn-lg btn-block" type="submit">Submit Payment</button>
+				</form>
+			</div>
+		</div>
+
+		<footer class="my-5 pt-5 text-muted text-center text-small">
+			<p class="mb-1">MIT License</p>
+		</footer>
+	</div>
+	<!-- Success Modal -->
+	<div class="modal fade" id="successmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="row text-center">
+						<div class="col">
+							<img class="my-4" src="data:image/png;base64,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">
+							<h5>Thanks for purchasing</h5>
+							<p id="response_message"></p>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Success Modal -->
+	<!-- Error Modal -->
+	<div class="modal fade" id="errormodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+		<div class="modal-dialog modal-dialog-centered" role="document">
+			<div class="modal-content">
+				<div class="modal-body">
+					<div class="row text-center">
+						<div class="col">
+							<img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAACgAAAAoCAYAAACM/rhtAAAAAXNSR0IArs4c6QAAAARnQU1BAACxjwv8YQUAAAAJcEhZcwAADsMAAA7DAcdvqGQAAAKkSURBVFhH7VjLahRBFB3QpW//QNy7sKsmhECTqkESIwrKaPIfBld+hY8v0JVEdOELvyIgYujRrRFFx/SEQBJp7+lcodN1u1Pd060R5sCBoes+DlXUrXunM8EEJfg2p0+MrLoyMurOyOiHxMdM+k3frF6ADZv/HSRheDQ23UUS8TY2apdEJGWMrdohvoltcAu+HKYdxEb3SdQnSYgnBxu2e4PDNYefVp2lXXguJKxHo1d+hBdOcfjxMAynztPOfRQTjccBYnOaekAAugTrQvCGqNZrixxemjpDASI5cJNUUa3jpsvwTA7YPGOrn3JaP+C2SoHa5EYvuM7py7FX5zwvRa8rf8/SxyalirzqZDyrl+QA+7l193ay+2412bxqxHUQa7CBrbSeZ9xTN1lGMVD1JecskTDZ2U6AX2vvRZH4hrUUZOsjkk7uFcuQ8b138eSBzxcdGXYli7zIfeIY8DnouPEsfp2ePs5yXJDRQt5JoiTgj8iyNSmWQxPMsxwX3IHIjjmKQqIPKbOoJG6PyyzHBb2RDwSHQkois6ghjqjusxwXaS8nOhUzFZnbNQDfqosjGv2I5bj4HwQehiO+x3JcHP5LMtu9LDg4FMWxkLI1KZZLNcdyXGDA+beFWm+XFmqAnpvXknOWrT11Vr9kGcXA9CU554mE2JWyo8MabHzEgWjzWEYx0PKQ8SDvLNKnlfKxAY1eS/r9IyyjHGgexSAtctPqa5zeD2jDpUDtUD3htP4YzsycRpcrB2ySKkKbx2mroe2xk07pc0OzseelqUQVbdngHKcZD5hb6ZatyIlqsMm/PrLAHz+UoP5uUimpfFurArUKxRwDDmYIUUiGsCG+wMTmXeeaAt5NzBAkZDlt1aiXY6Jto2/B/JcwPMbmE0zgotP5DY4eN7J91XxPAAAAAElFTkSuQmCC">
+							<h5>Something isn't right</h5>
+							<p id="error_message"></p>
+						</div>
+					</div>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary" data-dismiss="modal">Retry</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	<!-- End Success Modal -->
+	
+
+	<!-- Optional JavaScript -->
+	<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+	<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+	<script type="text/javascript">
+		var stripe = Stripe('pk_test_ybjckgOMdKsczDOux8AmkXxo');
+		var elements = stripe.elements();
+		var style = {
+			base: {
+				color: '#32325d',
+				lineHeight: '18px',
+				fontFamily: '"Helvetica Neue", Helvetica, sans-serif',
+				fontSmoothing: 'antialiased',
+				fontSize: '16px',
+				'::placeholder': {
+					color: '#aab7c4'
+				}
+			},
+			invalid: {
+				color: '#fa755a',
+				iconColor: '#fa755a'
+			}
+		};
+		var card = elements.create('card', {style: style});
+		card.mount('#card-element');
+		card.addEventListener('change', function(event) {
+			var displayError = document.getElementById('card-errors');
+			if (event.error) {
+				displayError.textContent = event.error.message;
+			} else {
+				displayError.textContent = '';
+			}
+		});
+
+
+		var form = document.getElementById('payment-form');
+		form.addEventListener('submit', function(event) {
+			event.preventDefault();
+			stripe.createToken(card).then(function(result) {
+				if (result.error) {
+					var errorElement = document.getElementById('card-errors');
+					errorElement.textContent = result.error.message;
+				} else {
+					handleStipeToken(result.token);
+				}
+			});
+		});
+
+		function successModal(email, neoAddress, numberOfTokens){
+			var message = "We sent " + numberOfTokens + " CAF to " + neoAddress + ". You can redeem your points at our cafe at any time or choose to send your friends a treat.";
+			$("#response_message").text(message)
+			$('#successmodal').modal({
+				keyboard: false,
+				backdrop:'static'
+			});
+		}
+
+		function errorModal(message){
+			$("#error_message").text(message)
+			$('#errormodal').modal({
+				keyboard: false,
+				backdrop:'static'
+			});
+		}
+
+		function handleResponse(data) {
+			if (data.code != 200) {
+				var errorMessage = data.error.message;
+				errorModal(errorMessage);
+				return;
+			}
+			var email = $("#email").val().trim();
+			var neoAddress = $("#neoAddress").val().trim();
+			var numberOfTokens = $("input[name=numberOfTokens]:checked").val();	
+			successModal(email, neoAddress, numberOfTokens);
+			form.reset();
+		}
+
+		function handleStipeToken(token) {
+			var email = $("#email").val().trim();
+			var neoAddress = $("#neoAddress").val().trim();
+			var numberOfTokens = $("input[name=numberOfTokens]:checked").val();
+			var data = {
+				"email": email,
+				"neoAddress": neoAddress,
+				"numberOfTokens":numberOfTokens,
+				"paymentToken":token,
+			}
+			card.clear();
+			postData('/api/v1/pay', data)
+			.then(data => handleResponse(data)) 
+			.catch(error => errorModal("error"))
+		}
+
+		function postData(url, data) {
+			return fetch(url, {
+				body: JSON.stringify(data), 
+				cache: 'no-cache', 
+				credentials: 'same-origin', 
+				headers: {
+					'content-type': 'application/json'
+				},
+				method: 'POST', 
+				mode: 'cors', 
+				redirect: 'follow', 
+				referrer: 'no-referrer', 
+			})
+			.then(response => response.json()) 
+		}
+	</script>
+
+</body>
+</html>
