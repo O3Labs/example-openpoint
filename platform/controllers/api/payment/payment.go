@@ -67,9 +67,9 @@ type StripeTokenData struct {
 //address AM8pnu1yK7ViMt7Sw2nPpbtPQXTwjjkykn
 //WIF L1AUSgSr36KzXynHGVveTzpcd6mfhCoXX7Njku7kBawTvpvE87JS
 //contract owner is AK2nJJpJr6o664CWJKi1QRXjqeic2zRp8y
-var openPointSmartContract = neoutils.UseSmartContract(config.Env.NEO.SmartContractScriptHash)
 
 func invokeSmartContract(stripeChargeID string, toAddress string, numberOfTokens int, toEmail string) {
+	var openPointSmartContract = neoutils.UseSmartContract(config.Env.NEO.SmartContractScriptHash)
 
 	//this is a private net private key
 	//private key must be moved out from the code here.
@@ -87,7 +87,7 @@ func invokeSmartContract(stripeChargeID string, toAddress string, numberOfTokens
 		return
 	}
 	args := []interface{}{to, numberOfTokens}
-
+	log.Printf("neo config %+v", config.Env.NEO)
 	client := coz.NewClient(config.Env.NEO.CoZEndpoint)
 	//get unspent of the contract owner
 	unspentCoz, err := client.GetUnspentByAddress(privateNetwallet.Address)
@@ -118,8 +118,91 @@ func invokeSmartContract(stripeChargeID string, toAddress string, numberOfTokens
 
 	transactionID := stripeChargeID
 	attributes := map[smartcontract.TransactionAttribute][]byte{}
-	attributes[smartcontract.Remark1] = []byte(transactionID)
+	attributes[smartcontract.Description] = []byte(transactionID)
 	tx, err := openPointSmartContract.GenerateInvokeFunctionRawTransaction(*privateNetwallet, unspent, attributes, "mintTokensTo", args)
+	if err != nil {
+		log.Printf("error gen tx %v", err)
+		return
+	}
+	log.Printf("%x", tx)
+
+	neoclient := neorpc.NewClient(config.Env.NEO.FullNodeURL)
+	result := neoclient.SendRawTransaction(fmt.Sprintf("%x", tx))
+	log.Printf("%+v", result)
+	if result.Result == true {
+		//send email here
+		body := fmt.Sprintf("We sent %v tokens to the NEO Address %v", numberOfTokens, toAddress)
+		email := models.Email{
+			From:    "apisit@o3.network",
+			To:      toEmail,
+			Subject: fmt.Sprintf("TEST: Purchased of %v tokens from O3 Labs", numberOfTokens),
+			HTML:    body,
+		}
+		errEmail := services.NewEmailService().SendEmail(email)
+		if errEmail != nil {
+			log.Printf("err email = %v", errEmail)
+		}
+	}
+}
+
+func invokeSmartContractTransfer(stripeChargeID string, fromAddress string, toAddress string, numberOfTokens int, toEmail string) {
+	var openPointSmartContract = neoutils.UseSmartContract(config.Env.NEO.SmartContractScriptHash)
+
+	//this is a private net private key
+	//private key must be moved out from the code here.
+	//it could be set as env variable on the server
+	wif := "KxDgvEKzgSBPPfuVfw67oPQBSjidEiqTHURKSDL1R7yGaGYAeYnr"
+	privateNetwallet, err := neoutils.GenerateFromWIF(wif)
+	if err != nil {
+		log.Printf("%v", err)
+		return
+	}
+
+	to := smartcontract.ParseNEOAddress(toAddress)
+	if to == nil {
+		//invalid neo address
+		return
+	}
+
+	from := smartcontract.ParseNEOAddress(fromAddress)
+	if from == nil {
+		//invalid neo address
+		return
+	}
+	args := []interface{}{from, to, numberOfTokens}
+	log.Printf("neo config %+v", config.Env.NEO)
+	client := coz.NewClient(config.Env.NEO.CoZEndpoint)
+	//get unspent of the contract owner
+	unspentCoz, err := client.GetUnspentByAddress(privateNetwallet.Address)
+	if err != nil {
+		log.Printf("error gen tx %v", err)
+		return
+	}
+	gasBalance := smartcontract.Balance{
+		Amount: float64(0) / float64(100000000),
+		UTXOs:  []smartcontract.UTXO{},
+	}
+
+	for _, v := range unspentCoz.GAS.Unspent {
+		gasTX1 := smartcontract.UTXO{
+			Index: v.Index,
+			TXID:  v.Txid,
+			Value: v.Value,
+		}
+		log.Printf("utxo value = %.8f", v.Value)
+		gasBalance.UTXOs = append(gasBalance.UTXOs, gasTX1)
+	}
+
+	unspent := smartcontract.Unspent{
+		Assets: map[smartcontract.NativeAsset]*smartcontract.Balance{},
+	}
+
+	unspent.Assets[smartcontract.GAS] = &gasBalance
+
+	transactionID := stripeChargeID
+	attributes := map[smartcontract.TransactionAttribute][]byte{}
+	attributes[smartcontract.Description] = []byte(transactionID)
+	tx, err := openPointSmartContract.GenerateInvokeFunctionRawTransaction(*privateNetwallet, unspent, attributes, "transfer", args)
 	if err != nil {
 		log.Printf("error gen tx %v", err)
 		return

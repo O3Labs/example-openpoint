@@ -17,7 +17,7 @@
 	},
 	"neo":{
 		"cozEndpoint":"http://127.0.0.1:5000",
-		"smartContractScriptHash":"b7c1f850a025e34455e7e98c588c784385077fb1",
+		"smartContractScriptHash":"75b7a2153b7f4bea152a5ecf19f8855c11e74517",
 		"fullNodeURL":"http://localhost:30333"
 	}
 }
