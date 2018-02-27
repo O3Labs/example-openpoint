@@ -10,7 +10,7 @@ It's a smart contract written in C# that conforms NEP5 protocol with additional 
 neo-utils is used to invok a smart contract.
 
 #### [NEO-transaction-watcher](https://github.com/O3Labs/neo-transaction-watcher) 
-This is used to watch a transaction of a particular smart contract. In this case, It parses data of the transaction and verify with external source such as payment processor. If it's valid then send user an email about the transaction or even push notification to the mobile device.
+This is used to watch an incoming transaction of a particular smart contract. In this case, It parses data of the transaction and verify with external source such as payment processor. If it's valid then send user an email about the transaction or even push notification to the mobile device.
 
 #### [NEP9](https://github.com/O3Labs/NEP9-go)
 This will be used to parse the NEP9 QR code shows on the terminal at the business to let user scans it to invoke the smart contract easily.
