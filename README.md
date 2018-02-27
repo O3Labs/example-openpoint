@@ -57,3 +57,7 @@ http://localhost:8080/web/
 
 #### Online demo
 http://54.168.104.133:8080/web/
+
+Test card is : `4242 4242 4242 4242` with any expiration date and zip code.  
+Try purchase some points with a valid NEO address on TestNet. You will be notified by email about the purchase.
+
