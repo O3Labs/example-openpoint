@@ -1,3 +1,5 @@
+### Blockchain Loyalty Program
+This backend demonstates the ability to buy loyalty points of business. Points are stored on the NEO blockchain so users are able to freely send to other users. Points can be redeemed at the business. Business can launch its own loyalty program easily. 
 
 
 ##### for debugging
